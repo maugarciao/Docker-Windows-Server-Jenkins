@@ -1,8 +1,12 @@
 # Docker Windows Server Core Jenkins
 DevOps Dockerized Windows Server Core with Jenkins, ASP.NET 4.8, .NET Core 3.1
 
+WARNING: while this does build a Windows Server Core image there appear to be issues with Jenkins currently. I can get it to run but it's failing after project creation.
+
+TODO: map in volume so jenkins data can be backed up.
+
 #### Blog Post
-[mrjamiebowman.com](https://www.mrjamiebowman.com)
+[mrjamiebowman: Docker: Jenkins Build Server on Windows Server Core](https://www.mrjamiebowman.com/devops/docker-jenkins-build-server-on-windows-server-core/)
 
 # Installer Files
 I thought about this and decided it was best to run a PowerShell script before hand that downloads the installer files. Why did I do it this way? Had I done the download in the Dockerfile using PowerShell, it would have had to download all of those installers every time this image is re-created. You also have to log into Oracle to download the JRE SDK files. Rebuilding and customizing this image will be easier by mapping in the installer files since they are so large.
