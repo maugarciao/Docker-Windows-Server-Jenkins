@@ -6,9 +6,16 @@ $installer_path =
 $installer_path = "$(Get-Location)\installers\"
 Write-Host "Downloading to... " + $installer_path
 
+# create installers folder
 If (-not (Test-Path -Path $installer_path)) {
     Write-Host "Creating installer directory..."
     mkdir $installer_path
+}
+
+# create jenkins folder
+If (-not (Test-Path -Path "$(Get-Location)\jenkins\")) {
+    Write-Host "Creating jenkins directory..."
+    mkdir "$(Get-Location)\jenkins\"
 }
 
 # objs
