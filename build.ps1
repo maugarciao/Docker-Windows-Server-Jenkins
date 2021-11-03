@@ -6,5 +6,5 @@ Write-Host "Executing Download Installers Script..."
 
 # build docker image
 Write-Host "Building Docker Image..."
-docker build -t maugarciao/jenkins-windows .
+docker build -t openjdktest .
 # --no-cache

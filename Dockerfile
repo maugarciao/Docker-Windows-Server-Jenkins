@@ -1,5 +1,6 @@
 #FROM mcr.microsoft.com/windows/servercore:1809-amd64
-FROM mcr.microsoft.com/windows/servercore:20H2-amd64
+#FROM mcr.microsoft.com/windows/servercore:20H2-amd64
+FROM openjdk
 LABEL maintainer="@MG"
 
 #SHELL ["powershell"]
@@ -22,8 +23,19 @@ RUN mkdir C:\Java\jdk-11.0.11+9\bin
 WORKDIR /setup
 COPY ./installers/*.* /setup/
 
+
+# install asp.net 4.8 developer pack
+#COPY ./installers/ndp48-devpack-enu.exe /setup/
+RUN ndp48-devpack-enu.exe /q /install
+RUN CMD ndp48-devpack-enu.exe /q /install
+
+#prepare tls for chocolatey
+RUN powershell [Enum]::GetNames([Net.SecurityProtocolType]) -contains 'Tls12'
+RUN powershell System.Net.ServicePointManager]::SecurityProtocol.HasFlag([Net.SecurityProtocolType]::Tls12)
+RUN powershell [Net.ServicePointManager]::SecurityProtocol = [Net.ServicePointManager]::SecurityProtocol -bor [Net.SecurityProtocolType]::Tls12
+
 #Java
-RUN PowerShell -Command "Start-Process -Wait -FilePath msiexec -ArgumentList /i, "microsoft-jdk-11.0.12.7.1-windows-x64.msi", "ADDLOCAL=FeatureMain,FeatureEnvironment,FeatureJarFileRunWith,FeatureJavaHome", "INSTALLDIR='C:\Program Files\Java'", /quiet"
+#RUN PowerShell -Command "Start-Process -Wait -FilePath msiexec -ArgumentList /i, "microsoft-jdk-11.0.12.7.1-windows-x64.msi", "ADDLOCAL=FeatureMain,FeatureEnvironment,FeatureJarFileRunWith,FeatureJavaHome", "INSTALLDIR='C:\Program Files\Java'", /quiet"
 
 # 7zip
 #COPY ./installers/7zip-x64.exe /setup/
@@ -43,29 +55,28 @@ RUN powershell -Command "Start-Process -Wait -FilePath 'C:\setup\7zip-x64.exe' -
 #RUN 7z.exe x OpenJDK11U-jdk_x64_windows_hotspot_11.0.11_9.zip -y
 
 # install chocolatey
-RUN powershell -Command "Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))"
+
+#RUN powershell -Command "Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))"
 
 # install apps
-WORKDIR /setup
+#WORKDIR /setup
 
-# install asp.net 4.8 developer pack
-COPY ./installers/ndp48-devpack-enu.exe /setup/
-RUN ndp48-devpack-enu.exe /q /install
+
 
 # install .net core 3.1
-COPY ./installers/dotnet-sdk-3.1.407-win-x64.exe /setup/
-RUN dotnet-sdk-3.1.407-win-x64.exe /q /install
+#COPY ./installers/dotnet-sdk-3.1.407-win-x64.exe /setup/
+#RUN dotnet-sdk-3.1.407-win-x64.exe /q /install
 
 # set up jenkins
-ENV HOME /jenkins
-ENV JENKINS_VERSION 2.298
+#ENV HOME /jenkins
+#ENV JENKINS_VERSION 2.298
 #RUN powershell -Command "(New-Object System.Net.WebClient).DownloadFile('https://updates.jenkins-ci.org/download/war/2.0/jenkins.war', '/jenkins/jenkins.war');"
-RUN powershell -Command "(New-Object System.Net.WebClient).DownloadFile('https://updates.jenkins-ci.org/latest/jenkins.war', '/jenkins/jenkins.war');"
+#RUN powershell -Command "(New-Object System.Net.WebClient).DownloadFile('https://updates.jenkins-ci.org/latest/jenkins.war', '/jenkins/jenkins.war');"
 
 EXPOSE 8080
 EXPOSE 50000
 
 # entrypoint
-COPY entrypoint.bat /setup/
+#COPY entrypoint.bat /setup/
 
-ENTRYPOINT /setup/entrypoint.bat
+#ENTRYPOINT /setup/entrypoint.bat

@@ -80,12 +80,23 @@ If(-not (Test-Path -Path ($installer_path + "./jenkins.msi")))
 $wc.DownloadFile("https://get.jenkins.io/windows/2.313/jenkins.msi", $installer_path + "jenkins.msi")
 }
 gci $installer_path\jenkins.msi
+
 #download jreJRE8 jre-8u291
-Write-Host "Downloading Java..."
+Write-Host "Downloading Java JRE-8u291..."
 If(-not (Test-Path -Path ($installer_path + "./jre-8u291-windows-i586.exe")))
 {
 $wc.DownloadFile("https://javadl.oracle.com/webapps/download/AutoDL?BundleId=244554_d7fc238d0cbf4b0dac67be84580cfb4b", $installer_path + "jre-8u291-windows-i586.exe")
 }
 gci $installer_path\jre-8u291-windows-i586.exe
+
+#download offline chocolatey
+Write-Host "Downloading offline chocolatey..."
+If(-not (Test-Path -Path ($installer_path + "./chocolatey.0.11.3.nupkg")))
+{
+$wc.DownloadFile("https://community.chocolatey.org/api/v2/package/chocolatey", $installer_path + "chocolatey.0.11.3.nupkg")
+}
+gci $installer_path\chocolatey.0.11.3.nupkg
+
+
 pause
 #>
